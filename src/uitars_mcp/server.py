@@ -240,16 +240,16 @@ async def uitars_help() -> dict:
 
     return {
         "success": True,
-        "server": "uitars-mcp v0.1.0",
+        "server": f"uitars-mcp v{__version__}",
         "description": (
-            "Desktop GUI agent — give it a natural language task and it "
+            "Desktop + browser GUI agent — give it a natural language task and it "
             "takes screenshots, feeds them to a vision-language model, "
-            "and executes mouse/keyboard actions to complete it."
+            "and executes mouse/keyboard/browser actions to complete it."
         ),
         "tools": [
             {
                 "name": "uitars_execute",
-                "description": "Execute a GUI task end-to-end. This is the main tool.",
+                "description": "Execute a GUI task end-to-end on the desktop.",
                 "parameters": "task (str, required), max_steps (int, default 15)",
                 "example": 'uitars_execute(task="Open Notepad and type hello world")',
             },
@@ -270,6 +270,36 @@ async def uitars_help() -> dict:
                 "description": "Type text at current keyboard focus.",
                 "parameters": "text (str)",
                 "example": 'uitars_type(text="Hello, world!")',
+            },
+            {
+                "name": "uitars_browser_navigate",
+                "description": "Navigate headless Chromium to a URL, return page screenshot.",
+                "parameters": "url (str)",
+                "example": 'uitars_browser_navigate(url="https://github.com")',
+            },
+            {
+                "name": "uitars_browser_execute",
+                "description": "Execute a browser task via VLM grounding.",
+                "parameters": "task (str), start_url (str, optional), max_steps (int)",
+                "example": 'uitars_browser_execute(task="Search for Python")',
+            },
+            {
+                "name": "uitars_browser_close",
+                "description": "Close browser and free Playwright resources.",
+                "parameters": "none",
+                "example": "uitars_browser_close()",
+            },
+            {
+                "name": "uitars_status",
+                "description": "Unified health check: VLM, browser, config.",
+                "parameters": "none",
+                "example": "uitars_status()",
+            },
+            {
+                "name": "uitars_help",
+                "description": "Get inline help — tool reference, examples, and config.",
+                "parameters": "none",
+                "example": "uitars_help()",
             },
         ],
         "examples": [

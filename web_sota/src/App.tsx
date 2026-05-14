@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Demo } from "./Demo";
 
 interface VLMStatus {
   ok: boolean;
@@ -33,7 +34,7 @@ interface PageInfo {
   error?: string;
 }
 
-type Tab = "control" | "browser" | "help";
+type Tab = "control" | "browser" | "help" | "demo";
 
 const API = "/api";
 
@@ -160,6 +161,7 @@ function App() {
         <div style={s.tabs}>
           <button style={s.tab("control")} onClick={() => setTab("control")}>Desktop</button>
           <button style={s.tab("browser")} onClick={() => setTab("browser")}>Browser</button>
+          <button style={s.tab("demo")} onClick={() => setTab("demo")}>Demo</button>
           <button style={s.tab("help")} onClick={() => setTab("help")}>Help</button>
         </div>
       </div>
@@ -256,6 +258,9 @@ function App() {
           )}
         </>
       )}
+
+      {/* ── Demo ── */}
+      {tab === "demo" && <Demo />}
 
       {/* ── Help ── */}
       {tab === "help" && (

@@ -51,9 +51,7 @@ def _get_playwright():
 
             _pw = sync_playwright().start()
         except ImportError:
-            raise RuntimeError(
-                "Playwright not installed. Run: uv sync --extra browser"
-            ) from None
+            raise RuntimeError("Playwright not installed. Run: uv sync --extra browser") from None
     return _pw
 
 
@@ -74,14 +72,14 @@ def close_browser():
         try:
             browser.close()
         except Exception:
-            pass
+            logger.debug("Browser close suppressed exception")
     _browser_ctx.pop("page", None)
     global _pw
     if _pw:
         try:
             _pw.stop()
         except Exception:
-            pass
+            logger.debug("Playwright stop suppressed exception")
         _pw = None
 
 
@@ -251,7 +249,7 @@ async def run_browser_task(task: str, start_url: str | None = None) -> dict[str,
             page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
 
         for step_num in range(1, config.max_steps + 1):
-            screenshot_b64, width, height = capture_page_screenshot()
+            screenshot_b64, _width, _height = capture_page_screenshot()
 
             response = await call_vlm(task, screenshot_b64, history)
             parsed = parse_browser_action(response)
@@ -274,15 +272,12 @@ async def run_browser_task(task: str, start_url: str | None = None) -> dict[str,
                         {
                             "type": "text",
                             "text": (
-                                f"Action executed: {status}\n\n"
-                                "Here is the updated page. Output your next action."
+                                f"Action executed: {status}\n\nHere is the updated page. Output your next action."
                             ),
                         },
                         {
                             "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/png;base64,{screenshot_b64}"
-                            },
+                            "image_url": {"url": f"data:image/png;base64,{screenshot_b64}"},
                         },
                     ],
                 }

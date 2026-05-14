@@ -1,4 +1,5 @@
 """Tests for uitars-mcp operators."""
+
 from __future__ import annotations
 
 from uitars_mcp.operators.computer import parse_action, parse_box_to_coords

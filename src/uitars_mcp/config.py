@@ -40,9 +40,7 @@ class UITARSConfig:
                         headers={"Authorization": f"Bearer {self.vlm_api_key}"},
                     )
                     if r.status_code != 200:
-                        warnings.append(
-                            f"VLM probe returned {r.status_code} from {self.vlm_base_url}"
-                        )
+                        warnings.append(f"VLM probe returned {r.status_code} from {self.vlm_base_url}")
 
             try:
                 asyncio.get_event_loop()
@@ -67,7 +65,7 @@ class UITARSConfig:
             else:
                 logger.info("Browser operator unavailable (uv sync --extra browser)")
         except Exception:
-            pass
+            logger.debug("Playwright probe failed — browser operator unavailable")
 
         return warnings
 

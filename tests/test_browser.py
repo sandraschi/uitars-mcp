@@ -1,4 +1,5 @@
 """Tests for uitars-mcp browser operator."""
+
 from __future__ import annotations
 
 from uitars_mcp.operators.browser import parse_browser_action

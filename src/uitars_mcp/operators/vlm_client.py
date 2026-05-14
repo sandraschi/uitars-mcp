@@ -42,9 +42,7 @@ def build_messages(
             "content": [
                 {
                     "type": "text",
-                    "text": (
-                        f"Task: {task}\n\nOutput your next action. If complete, use finished()."
-                    ),
+                    "text": (f"Task: {task}\n\nOutput your next action. If complete, use finished()."),
                 },
                 {
                     "type": "image_url",

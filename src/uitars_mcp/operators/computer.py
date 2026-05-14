@@ -195,10 +195,7 @@ async def run_task(task: str) -> dict[str, Any]:
                 "content": [
                     {
                         "type": "text",
-                        "text": (
-                            f"Action executed: {status}\n\n"
-                            "Here is the updated screen. Output your next action."
-                        ),
+                        "text": (f"Action executed: {status}\n\nHere is the updated screen. Output your next action."),
                     },
                     {
                         "type": "image_url",
