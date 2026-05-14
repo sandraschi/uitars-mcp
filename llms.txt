@@ -2,19 +2,20 @@
 
 > Tell your computer what to do. It does it.
 
-Desktop GUI agent MCP server powered by UI-TARS vision-language models.
+Desktop + browser GUI agent MCP server powered by UI-TARS vision-language models.
+8 MCP tools covering desktop automation and headless browser control.
 
 ## Quick Links
-- [README.md](README.md) — overview, quick start, tool summary
+- [README.md](README.md) — overview, quick start, comparison table
 - [SPEC.md](SPEC.md) — full architecture spec and design decisions
 - [CHANGELOG.md](CHANGELOG.md) — version history
 - [docs/install.md](docs/install.md) — prerequisites, clone, uv sync
-- [docs/configuration.md](docs/configuration.md) — env vars, VLM providers, VRAM budget
+- [docs/configuration.md](docs/configuration.md) — env vars, VLM providers, VRAM
 - [docs/tools-reference.md](docs/tools-reference.md) — every MCP tool with parameters
 - [docs/architecture.md](docs/architecture.md) — screenshot loop internals
+- [docs/browser.md](docs/browser.md) — browser operator setup and usage
 - [docs/safety.md](docs/safety.md) — fail-safe, risks, privacy
 - [docs/troubleshooting.md](docs/troubleshooting.md) — common problems and fixes
 - [docs/integration-guide.md](docs/integration-guide.md) — Claude Desktop, fleet, REST API
-- [docs/examples/](docs/examples/) — working code snippets
 - [src/uitars_mcp/](src/uitars_mcp/) — Python backend source
 - [web_sota/](web_sota/) — Vite + React frontend

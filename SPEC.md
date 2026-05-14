@@ -121,26 +121,34 @@ Currently there is no way to use GUI automation from within the MCP fleet. Claud
 
 ## 3. Implementation Phases
 
-### Phase 1: Core MCP Server (this sprint)
+### Phase 1: Core MCP Server ✅ (complete)
 - [x] SPEC.md
-- [ ] pyproject.toml, .gitignore, justfile
-- [ ] `src/uitars_mcp/config.py` — env-based config
-- [ ] `src/uitars_mcp/operators/vlm_client.py` — OpenAI-compatible VLM client
-- [ ] `src/uitars_mcp/operators/computer.py` — screenshot + execute loop
-- [ ] `src/uitars_mcp/server.py` — FastMCP tools
-- [ ] `src/uitars_mcp/app.py` — FastAPI + MCP mount
-- [ ] `src/uitars_mcp/__main__.py` — uvicorn entry point
-- [ ] Tests: mock VLM + screenshot roundtrip
+- [x] pyproject.toml, .gitignore, justfile
+- [x] `src/uitars_mcp/config.py` — env-based config
+- [x] `src/uitars_mcp/operators/vlm_client.py` — OpenAI-compatible VLM client
+- [x] `src/uitars_mcp/operators/computer.py` — screenshot + execute loop
+- [x] `src/uitars_mcp/server.py` — FastMCP tools (5 tools)
+- [x] `src/uitars_mcp/app.py` — FastAPI + MCP mount
+- [x] `src/uitars_mcp/__main__.py` — uvicorn entry point
+- [x] Tests: action parser + coordinate mapper (6 tests)
+- [x] Fleet-standard docs: 8 documents in docs/
+- [x] LICENSE (Apache 2.0), CHANGELOG.md
 
-### Phase 2: Webapp (next sprint)
-- [ ] `web_sota/` — Vite + React + TypeScript
-- [ ] Screenshot feed (polling or SSE)
-- [ ] Task input + action history timeline
-- [ ] Model status panel (VRAM, provider)
+### Phase 2: Webapp ✅ (complete)
+- [x] `web_sota/` — Vite + React + TypeScript
+- [x] Screenshot feed (polling)
+- [x] Task input + action history timeline
+- [x] Model status panel (VLM badge)
+- [x] Help tab — tool table, examples, docs links, safety info
 
-### Phase 3: Browser Operator (future)
+### Phase 3: Browser Operator (current)
 - [ ] `operators/browser.py` — Playwright-based browser control
-- [ ] `uitars_browser` MCP tool
+- [ ] `uitars_browser_navigate` MCP tool — open URL, get page screenshot
+- [ ] `uitars_browser_execute` MCP tool — execute task in browser via VLM
+- [ ] REST endpoints: `/api/browser/navigate`, `/api/browser/execute`
+- [ ] Webapp Browser tab — URL input, task runner, page screenshot feed
+- [ ] `docs/browser.md` — browser operator documentation
+- [ ] Playwright as optional dependency
 
 ---
 

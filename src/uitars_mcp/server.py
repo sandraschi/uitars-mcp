@@ -9,6 +9,8 @@ from fastmcp.server.middleware.logging import LoggingMiddleware
 from pydantic import Field
 
 from . import __version__
+from .config import config
+from .operators.browser import close_browser, navigate_to, run_browser_task
 from .operators.computer import capture_screenshot, run_task
 
 mcp = FastMCP(
@@ -129,6 +131,78 @@ async def uitars_type(
         return {"success": True, "text": text}
     except Exception as exc:
         return {"success": False, "error": str(exc)}
+
+
+@mcp.tool(name="uitars_browser_navigate", annotations={"readOnlyHint": False})
+async def uitars_browser_navigate(
+    url: Annotated[str, Field(description="URL to navigate to.")],
+) -> dict:
+    """Navigate browser to a URL and return page screenshot + info.
+
+    Launches headless Chromium via Playwright. Requires `uv sync --extra browser`.
+
+    ## Return Format
+    {"success": true, "url": str, "title": str, "screenshot_base64": str,
+     "width": int, "height": int}
+
+    ## Examples
+    - uitars_browser_navigate(url="https://github.com")
+    """
+    result = await navigate_to(url)
+    return result
+
+
+@mcp.tool(name="uitars_browser_execute", annotations={"readOnlyHint": False})
+async def uitars_browser_execute(
+    task: Annotated[
+        str,
+        Field(description="Natural language task to perform in the browser."),
+    ],
+    start_url: Annotated[
+        str | None,
+        Field(description="Optional: navigate to this URL first before starting."),
+    ] = None,
+    max_steps: Annotated[
+        int,
+        Field(description="Maximum action steps before stopping.", ge=1, le=50),
+    ] = 15,
+) -> dict:
+    """Execute a task in the browser via visual grounding.
+
+    Launches headless Chromium via Playwright, captures page screenshots,
+    feeds them to the VLM, and executes click/type/scroll actions.
+    Requires `uv sync --extra browser`.
+
+    ## Return Format
+    {"success": bool, "task": str, "steps": int, "message": str,
+     "actions": [{"step": int, "thought": str, "action": str,
+                  "action_type": str, "status": str}, ...]}
+
+    ## Examples
+    - uitars_browser_execute(task="Search for Python on Google", start_url="https://google.com")
+    - uitars_browser_execute(task="Click the first search result")
+    """
+    original_max = config.max_steps
+    config.max_steps = max_steps
+    try:
+        result = await run_browser_task(task, start_url)
+    finally:
+        config.max_steps = original_max
+    return result
+
+
+@mcp.tool(name="uitars_browser_close", annotations={"readOnlyHint": False})
+async def uitars_browser_close() -> dict:
+    """Close the current browser instance. Frees Playwright resources.
+
+    ## Return Format
+    {"success": true}
+
+    ## Examples
+    - uitars_browser_close()
+    """
+    close_browser()
+    return {"success": True}
 
 
 @mcp.tool(name="uitars_help", annotations={"readOnlyHint": True})

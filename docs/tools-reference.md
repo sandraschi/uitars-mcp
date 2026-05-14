@@ -1,6 +1,6 @@
 # Tools Reference
 
-4 MCP tools + 1 help tool. All available via the `/mcp` HTTP endpoint.
+8 MCP tools (5 desktop + 3 browser). All available via the `/mcp` HTTP endpoint.
 
 ---
 
@@ -92,4 +92,48 @@ Type text at current keyboard focus.
 
 Get inline help — task reference, examples, and current configuration. No parameters.
 
-**Returns:** Tool listing, example tasks, VLM configuration summary.
+**Returns:** Tool listing (desktop + browser), example tasks, VLM configuration summary.
+
+---
+
+## Browser Tools
+
+### `uitars_browser_navigate`
+
+Navigate browser to a URL and return page screenshot + info. Launches headless Chromium via Playwright.
+
+**Parameters:**
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `url` | string | Yes | URL to navigate to |
+
+**Returns:**
+```json
+{"success": true, "url": "https://github.com", "title": "GitHub", "screenshot_base64": "...", "width": 1280, "height": 900}
+```
+
+---
+
+### `uitars_browser_execute`
+
+Execute a task in the browser via visual grounding.
+
+**Parameters:**
+
+| Param | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `task` | string | Yes | — | Natural language task to perform |
+| `start_url` | string | No | — | Navigate here first before starting |
+| `max_steps` | int | No | 15 | Max action steps (1–50) |
+
+**Returns:**
+```json
+{"success": true, "task": "Search for Python", "steps": 3, "message": "Clicked first result", "actions": [...]}
+```
+
+---
+
+### `uitars_browser_close`
+
+Close the current browser instance and free Playwright resources. No parameters.

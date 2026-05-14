@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0 (2026-05-14)
+
+- Browser operator — Playwright-based headless Chromium control
+- `uitars_browser_navigate` MCP tool — navigate to URL, return page screenshot
+- `uitars_browser_execute` MCP tool — execute browser tasks via VLM grounding
+- `uitars_browser_close` MCP tool — close browser, free resources
+- Browser REST endpoints: `/api/browser/navigate`, `/api/browser/execute`, `/api/browser/close`
+- Webapp Browser tab with URL input, page screenshot, and task runner
+- Playwright as optional dependency (`uv sync --extra browser`)
+- Rewritten README with badges, comparison table, and VLM provider matrix
+- Updated help tool and webapp Help tab with browser tools
+- `docs/browser.md` — browser operator documentation
+
 ## 0.1.0 (2026-05-14)
 
 - Initial release: FastMCP 3.2 server with 4 MCP tools

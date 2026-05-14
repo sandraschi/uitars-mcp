@@ -21,6 +21,7 @@ uitars-mcp = "uitars_mcp.__main__:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.8"]
+browser = ["playwright>=1.48"]
 
 [dependency-groups]
 dev = ["ruff>=0.15"]

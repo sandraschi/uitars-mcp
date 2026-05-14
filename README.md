@@ -1,8 +1,15 @@
-# UI-TARS MCP
+# UI-TARS MCP — Desktop + Browser Agent
 
-> Tell your computer what to do. It does it.
+[![FastMCP](https://img.shields.io/badge/FastMCP-3.2-blue)](https://github.com/jlowin/fastmcp)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-0.2.0--alpha-blue)](CHANGELOG.md)
+[![MCP Tools](https://img.shields.io/badge/MCP_Tools-8-orange)](docs/tools-reference.md)
+[![VLM Backends](https://img.shields.io/badge/VLM-4_providers-purple)](docs/configuration.md)
 
-**uitars-mcp** gives AI agents (Claude, OpenCode, Hermes) eyes and hands on your desktop. It takes screenshots, feeds them to a vision-language model, and executes mouse/keyboard actions — all through standard MCP tools.
+> **Tell your computer what to do. It does it.**
+
+uitars-mcp gives AI agents (Claude, OpenCode, Hermes) eyes and hands on your desktop **and browser**. It takes screenshots, feeds them to a vision-language model, and executes mouse/keyboard/browser actions — all through standard MCP tools.
 
 ## Quick Start
 
@@ -10,7 +17,6 @@
 git clone https://github.com/sandraschi/uitars-mcp.git
 cd uitars-mcp
 uv sync
-# Point at a VLM — local Ollama or cloud API (see docs/configuration.md)
 $env:UITARS_VLM_BASE_URL = "http://127.0.0.1:11434/v1"
 $env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
 .\web_sota\start.ps1
@@ -18,38 +24,51 @@ $env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
 
 ## What it does
 
-| Tool | What your agent says | What happens |
-|------|---------------------|--------------|
-| `uitars_execute` | "Open Notepad, type hello world" | Screenshot → VLM → click → type → done |
-| `uitars_screenshot` | "Show me the desktop" | Returns base64 PNG of current screen |
-| `uitars_click` | "Click at (500, 300)" | Mouse click at coordinates |
-| `uitars_type` | "Type the report" | Keyboard input at cursor |
-| `uitars_help` | "What can you do?" | Task reference, examples, config |
+| Surface | Tools | How it works |
+|---------|-------|-------------|
+| **Desktop** | `uitars_execute`, `screenshot`, `click`, `type`, `help` | Screenshot → VLM → mouse/keyboard actions |
+| **Browser** | `uitars_browser_navigate`, `browser_execute`, `browser_close` | Headless Chromium → page screenshot → VLM → click/type/scroll |
 
-## Requirements
+## Comparison
 
-- **Python 3.12+** with `uv`
-- **A VLM endpoint** — one of:
-  - Ollama with `qwen2.5-vl:7b` (~5.5 GB VRAM, fits any GPU)
-  - vLLM with UI-TARS-1.5-7B (~14 GB VRAM, fits RTX 4090)
-  - Cloud API (Anthropic, OpenAI) — no GPU needed
-- **Node.js** for the webapp (optional; server works standalone)
-- **Windows or macOS** — tested on Windows
+| | uitars-mcp | pywinauto-mcp | autohotkey-mcp | Manual automation |
+|---|---|---|---|---|
+| **Method** | Visual grounding (VLM) | UI element tree (Win32) | Scripted keybinds | Human clicking |
+| **Works with** | Any visible UI | Windows native apps only | Pre-defined hotkeys | Everything |
+| **Flexibility** | Adapts to any layout, any app | Fixed element paths break on UI changes | Rigid scripts | Requires human |
+| **Setup** | Point at a VLM endpoint | None (Win32 APIs) | Install AHK v2 | None |
+| **Accuracy** | Dependent on VLM quality | 100% for known elements | 100% for scripted flows | 100% |
+| **Browser** | Built-in (Playwright) | No | No | No |
+| **Best for** | General purpose automation, unknown UIs | Precise Windows automation | Repetitive hotkey workflows | One-off tasks |
 
-## Docs
+## MCP Tools (8)
 
-| Document | For |
-|----------|-----|
-| [docs/install.md](docs/install.md) | Prerequisites, clone, uv sync, verify |
-| [docs/configuration.md](docs/configuration.md) | Env vars, VLM providers, port tuning |
-| [docs/tools-reference.md](docs/tools-reference.md) | Every MCP tool with parameters and examples |
-| [docs/architecture.md](docs/architecture.md) | Screenshot loop internals, data flow |
-| [docs/safety.md](docs/safety.md) | Fail-safe, permissions, sandboxing |
-| [docs/troubleshooting.md](docs/troubleshooting.md) | Common problems and fixes |
-| [SPEC.md](SPEC.md) | Full architecture spec and design decisions |
-| [CHANGELOG.md](CHANGELOG.md) | Version history |
+### Desktop
+| Tool | What your agent says |
+|------|---------------------|
+| `uitars_execute` | "Open Notepad, type hello world" |
+| `uitars_screenshot` | "Show me the desktop" |
+| `uitars_click` | "Click at (500, 300)" |
+| `uitars_type` | "Type the report" |
+| `uitars_help` | "What can you do?" |
 
-## In your agent
+### Browser
+| Tool | What your agent says |
+|------|---------------------|
+| `uitars_browser_navigate` | "Go to github.com" |
+| `uitars_browser_execute` | "Search for Python, click the first result" |
+| `uitars_browser_close` | "Close the browser" |
+
+## VLM Providers
+
+| Provider | Model | VRAM | Setup |
+|----------|-------|------|-------|
+| **Ollama** (local) | qwen2.5-vl:7b | ~5.5 GB | `ollama pull qwen2.5-vl:7b` |
+| **vLLM** (local) | UI-TARS-1.5-7B | ~18 GB | pip install vllm |
+| **Anthropic** (cloud) | claude-sonnet-4 | 0 GB | API key |
+| **OpenAI** (cloud) | gpt-4o | 0 GB | API key |
+
+## Fleet Integration
 
 ```json
 {
@@ -62,12 +81,22 @@ $env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
 }
 ```
 
-## Ports
+Ports: **10976** (backend) / **10977** (frontend). Adjacent to chitchat (10974/10975).
 
-| Port | Service |
-|------|---------|
-| 10976 | Backend (FastAPI + MCP HTTP `/mcp`) |
-| 10977 | Frontend (Vite dev, proxies → 10976) |
+## Docs
+
+| Document | For |
+|----------|-----|
+| [docs/install.md](docs/install.md) | Prerequisites, clone, 3 VLM paths, verify |
+| [docs/configuration.md](docs/configuration.md) | Env vars, VLM providers, VRAM budget |
+| [docs/tools-reference.md](docs/tools-reference.md) | Every MCP tool with parameters and examples |
+| [docs/architecture.md](docs/architecture.md) | Screenshot loop internals, data flow |
+| [docs/browser.md](docs/browser.md) | Browser operator setup, Playwright, headless mode |
+| [docs/safety.md](docs/safety.md) | Fail-safe, permissions, privacy |
+| [docs/troubleshooting.md](docs/troubleshooting.md) | Common problems and fixes |
+| [docs/integration-guide.md](docs/integration-guide.md) | Claude Desktop, fleet, REST API |
+| [SPEC.md](SPEC.md) | Full architecture spec |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
 
 ## License
 

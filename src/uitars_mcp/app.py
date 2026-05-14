@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import __version__
+from .operators.browser import close_browser, navigate_to, run_browser_task
 from .operators.computer import capture_screenshot, run_task
 from .operators.vlm_client import check_vlm_health
 from .server import mcp
@@ -85,6 +86,42 @@ async def api_execute(body: dict):
     finally:
         config.max_steps = original_max
     return result
+
+
+# ── Browser ─────────────────────────────────────────────────────────
+
+
+@app.post("/api/browser/navigate")
+async def api_browser_navigate(body: dict):
+    url = body.get("url", "")
+    if not url:
+        return {"success": False, "error": "url is required"}, 400
+    return await navigate_to(url)
+
+
+@app.post("/api/browser/execute")
+async def api_browser_execute(body: dict):
+    task = body.get("task", "")
+    start_url = body.get("start_url")
+    max_steps = body.get("max_steps", 15)
+    if not task:
+        return {"success": False, "error": "task is required"}, 400
+
+    from .config import config
+
+    original_max = config.max_steps
+    config.max_steps = max_steps
+    try:
+        result = await run_browser_task(task, start_url)
+    finally:
+        config.max_steps = original_max
+    return result
+
+
+@app.post("/api/browser/close")
+async def api_browser_close():
+    close_browser()
+    return {"success": True}
 
 
 app.mount("/mcp", mcp.http_app())
