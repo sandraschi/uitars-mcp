@@ -44,13 +44,28 @@ if (-not $ready) {
 
 Set-Location (Join-Path $root "web_sota")
 if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-    Write-Host "[uitars-mcp] Installing frontend dependencies..."
-    npm install
+    Write-Host "[uitars-mcp] Installing frontend dependencies (this may take a minute)..."
+    $installJob = Start-Job -ScriptBlock {
+        Set-Location $using:root
+        Set-Location web_sota
+        npm install --no-audit --no-fund 2>&1
+    }
+    $installJob | Wait-Job -Timeout 120 | Out-Null
+    $installOutput = $installJob | Receive-Job
+    $installJob | Remove-Job -Force
+
     if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-        Write-Host "[uitars-mcp] ERROR: npm install failed - vite.cmd not found. Check network."
+        Write-Host "[uitars-mcp] npm install timed out or failed. Trying cached install..."
+        npm install --prefer-offline --no-audit --no-fund 2>&1
+    }
+
+    if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
+        Write-Host "[uitars-mcp] ERROR: vite.cmd still not found."
+        Write-Host "[uitars-mcp] Try manually: cd web_sota && npm install"
         Read-Host "Press Enter to exit"
         exit 1
     }
+    Write-Host "[uitars-mcp] Frontend dependencies installed."
 }
 
 Write-Host "[uitars-mcp] Starting frontend on port $frontendPort (Ctrl+C to stop)"
