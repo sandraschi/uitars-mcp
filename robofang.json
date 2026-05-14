@@ -1,0 +1,7 @@
+{
+  "name": "UI-TARS MCP — Desktop & Browser Agent",
+  "category": "Dev",
+  "description": "VLM-powered desktop and browser automation. 8 MCP tools: screenshot → VLM → mouse/keyboard/Playwright actions. Supports Ollama, vLLM, Anthropic, OpenAI. Fits RTX 4090.",
+  "webapp_script": "web_sota/start.ps1",
+  "ports": [10976, 10977]
+}

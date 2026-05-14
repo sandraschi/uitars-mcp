@@ -141,14 +141,24 @@ Currently there is no way to use GUI automation from within the MCP fleet. Claud
 - [x] Model status panel (VLM badge)
 - [x] Help tab — tool table, examples, docs links, safety info
 
-### Phase 3: Browser Operator (current)
-- [ ] `operators/browser.py` — Playwright-based browser control
-- [ ] `uitars_browser_navigate` MCP tool — open URL, get page screenshot
-- [ ] `uitars_browser_execute` MCP tool — execute task in browser via VLM
-- [ ] REST endpoints: `/api/browser/navigate`, `/api/browser/execute`
-- [ ] Webapp Browser tab — URL input, task runner, page screenshot feed
-- [ ] `docs/browser.md` — browser operator documentation
-- [ ] Playwright as optional dependency
+### Phase 3: Browser Operator ✅ (complete)
+- [x] `operators/browser.py` — Playwright-based browser control
+- [x] `uitars_browser_navigate` MCP tool — open URL, get page screenshot
+- [x] `uitars_browser_execute` MCP tool — execute task in browser via VLM
+- [x] `uitars_browser_close` MCP tool
+- [x] REST endpoints: `/api/browser/*`
+- [x] Webapp Browser tab — URL input, task runner, page screenshot feed
+- [x] `docs/browser.md` — browser operator documentation
+- [x] Playwright as optional dependency
+
+### Phase 4: Fleet Hardening (current)
+- [ ] `.pre-commit-config.yaml` — ruff format + lint, biome format (web_sota)
+- [ ] `robofang.json` — fleet discovery manifest
+- [ ] Config validation at startup — verify VLM reachable, ports free
+- [ ] Browser operator error recovery — auto-restart if browser crashes
+- [ ] `uitars_status` MCP tool — unified health: VLM, browser, GPU
+- [ ] Tests: browser operator action parser + coordinate mapper
+- [ ] `docs/robofang.md` — fleet integration guide
 
 ---
 

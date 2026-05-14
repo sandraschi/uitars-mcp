@@ -3,15 +3,19 @@
 ## 0.2.0 (2026-05-14)
 
 - Browser operator — Playwright-based headless Chromium control
-- `uitars_browser_navigate` MCP tool — navigate to URL, return page screenshot
-- `uitars_browser_execute` MCP tool — execute browser tasks via VLM grounding
-- `uitars_browser_close` MCP tool — close browser, free resources
+- `uitars_browser_navigate`, `uitars_browser_execute`, `uitars_browser_close` MCP tools
 - Browser REST endpoints: `/api/browser/navigate`, `/api/browser/execute`, `/api/browser/close`
 - Webapp Browser tab with URL input, page screenshot, and task runner
 - Playwright as optional dependency (`uv sync --extra browser`)
-- Rewritten README with badges, comparison table, and VLM provider matrix
-- Updated help tool and webapp Help tab with browser tools
+- Rewritten README: badges, comparison table, VLM provider matrix
+- `uitars_status` MCP tool — unified health: VLM, browser, config
+- Config validation at startup — VLM connectivity probe
+- Browser operator auto-recovery from crashes
+- `.pre-commit-config.yaml` (ruff + biome)
+- `robofang.json` fleet discovery manifest
+- 8 browser operator tests (14 tests total)
 - `docs/browser.md` — browser operator documentation
+- Updated tools reference, help tool, llms files
 
 ## 0.1.0 (2026-05-14)
 

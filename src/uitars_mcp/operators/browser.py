@@ -86,12 +86,24 @@ def close_browser():
 
 
 def get_page():
-    """Get or create the current Playwright page."""
+    """Get or create the current Playwright page. Auto-recovers from crashes."""
     page = _browser_ctx.get("page")
-    if page is None:
-        ctx = launch_browser(headless=True)
-        page = ctx["page"]
+    browser = _browser_ctx.get("browser")
+    if page is None or browser is None:
+        return _recover_browser()
+    try:
+        page.evaluate("1")
+    except Exception:
+        logger.warning("Browser page disconnected — recovering")
+        return _recover_browser()
     return page
+
+
+def _recover_browser():
+    """Close crashed browser and launch a fresh one."""
+    close_browser()
+    ctx = launch_browser(headless=True)
+    return ctx["page"]
 
 
 def capture_page_screenshot() -> tuple[str, int, int]:

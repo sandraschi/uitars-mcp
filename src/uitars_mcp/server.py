@@ -205,6 +205,27 @@ async def uitars_browser_close() -> dict:
     return {"success": True}
 
 
+@mcp.tool(name="uitars_status", annotations={"readOnlyHint": True})
+async def uitars_status() -> dict:
+    """Get unified health status — VLM, browser, config.
+
+    ## Return Format
+    {"success": true, "vlm": {...}, "browser_available": bool, "config": {...}}
+
+    ## Examples
+    - uitars_status()
+    """
+    from .operators.vlm_client import check_vlm_health
+
+    vlm_health = await check_vlm_health()
+    return {
+        "success": True,
+        "vlm": vlm_health,
+        "browser_available": config.browser_available,
+        "config": config.health_report(),
+    }
+
+
 @mcp.tool(name="uitars_help", annotations={"readOnlyHint": True})
 async def uitars_help() -> dict:
     """Get inline help — task reference, examples, and current configuration.
