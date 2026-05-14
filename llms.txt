@@ -1,17 +1,20 @@
 # uitars-mcp
 
+> Tell your computer what to do. It does it.
+
 Desktop GUI agent MCP server powered by UI-TARS vision-language models.
 
 ## Quick Links
-- README.md — project overview
-- SPEC.md — full architecture and design decisions
-- pyproject.toml — Python dependencies
-- web_sota/ — Vite + React frontend
-- src/uitars_mcp/ — Python backend (FastMCP + FastAPI)
-
-## Key Files
-- src/uitars_mcp/server.py — MCP tool definitions
-- src/uitars_mcp/app.py — FastAPI REST API
-- src/uitars_mcp/operators/computer.py — screenshot + action loop
-- src/uitars_mcp/operators/vlm_client.py — VLM API client
-- web_sota/src/App.tsx — React frontend
+- [README.md](README.md) — overview, quick start, tool summary
+- [SPEC.md](SPEC.md) — full architecture spec and design decisions
+- [CHANGELOG.md](CHANGELOG.md) — version history
+- [docs/install.md](docs/install.md) — prerequisites, clone, uv sync
+- [docs/configuration.md](docs/configuration.md) — env vars, VLM providers, VRAM budget
+- [docs/tools-reference.md](docs/tools-reference.md) — every MCP tool with parameters
+- [docs/architecture.md](docs/architecture.md) — screenshot loop internals
+- [docs/safety.md](docs/safety.md) — fail-safe, risks, privacy
+- [docs/troubleshooting.md](docs/troubleshooting.md) — common problems and fixes
+- [docs/integration-guide.md](docs/integration-guide.md) — Claude Desktop, fleet, REST API
+- [docs/examples/](docs/examples/) — working code snippets
+- [src/uitars_mcp/](src/uitars_mcp/) — Python backend source
+- [web_sota/](web_sota/) — Vite + React frontend

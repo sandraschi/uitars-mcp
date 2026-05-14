@@ -2,31 +2,42 @@
 
 ## Project Overview
 
-uitars-mcp is a desktop GUI agent MCP server that exposes natural language computer
-control as MCP tools. It wraps the UI-TARS vision-language model (or any
-OpenAI-compatible VLM) in a screenshot→action→execute loop.
+uitars-mcp is a desktop GUI agent MCP server that gives AI agents (Claude, OpenCode,
+Hermes) eyes and hands on your desktop. It takes screenshots, feeds them to a
+vision-language model (UI-TARS or any OpenAI-compatible VLM), and executes
+mouse/keyboard actions through standard MCP tools.
 
-## Architecture
+Single uvicorn process serves FastAPI REST API on port 10976 and FastMCP HTTP
+at /mcp. Vite + React webapp on port 10977.
 
-Single uvicorn process serves:
-- FastAPI REST API on port 10976
-- FastMCP HTTP endpoint at /mcp
-- Vite + React frontend on port 10977 (proxies /api and /mcp to 10976)
+## Quick Start
 
-## MCP Tools
+```powershell
+git clone https://github.com/sandraschi/uitars-mcp.git
+cd uitars-mcp
+uv sync
+$env:UITARS_VLM_BASE_URL = "http://127.0.0.1:11434/v1"
+$env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
+.\web_sota\start.ps1
+```
 
-1. uitars_execute(task, max_steps=15) — Full GUI task execution
-2. uitars_screenshot() — Capture desktop as base64 PNG
-3. uitars_click(x, y, button="left") — Click at coordinates
-4. uitars_type(text) — Type text at current focus
+## MCP Tools (5)
+
+1. **uitars_execute(task, max_steps=15)** — Full GUI task: natural language → screenshot → VLM → action → execute loop
+2. **uitars_screenshot()** — Capture desktop as base64 PNG plus resolution
+3. **uitars_click(x, y, button="left")** — Click at coordinates
+4. **uitars_type(text)** — Type text at current focus
+5. **uitars_help()** — Inline help: tool listing, task examples, configuration summary
 
 ## REST API
 
-- GET  /api/health       — Backend readiness
-- GET  /api/status        — VLM model health + info
-- GET  /api/screenshot    — Current desktop capture
-- POST /api/execute       — Execute GUI task {task, max_steps}
-- *    /mcp               — FastMCP HTTP endpoint
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /api/health | Backend readiness |
+| GET | /api/status | VLM model health + configured model |
+| GET | /api/screenshot | Current desktop capture (base64 PNG + resolution) |
+| POST | /api/execute | Execute GUI task `{task, max_steps}` |
+| * | /mcp | FastMCP HTTP endpoint |
 
 ## Configuration (Environment Variables)
 
@@ -34,24 +45,43 @@ Single uvicorn process serves:
 |----------|---------|-------------|
 | UITARS_PORT | 10976 | Backend port |
 | UITARS_FRONTEND_PORT | 10977 | Frontend port |
+| UITARS_HOST | 127.0.0.1 | Bind address |
+| UITARS_LOG_LEVEL | info | Logging level |
 | UITARS_VLM_BASE_URL | http://127.0.0.1:11434/v1 | VLM endpoint |
 | UITARS_VLM_MODEL | qwen2.5-vl:7b | Model name |
 | UITARS_VLM_API_KEY | ollama | API key |
-| UITARS_MAX_STEPS | 15 | Max action steps |
+| UITARS_MAX_STEPS | 15 | Max actions per task |
 
 ## VLM Providers
 
-- Ollama (local): qwen2.5-vl:7b — ~5.5GB VRAM
-- vLLM (local): UI-TARS-1.5-7B — ~14GB VRAM (FP16)
-- Anthropic API: claude-sonnet-4-20250514 — no GPU needed
-- OpenAI API: gpt-4o — no GPU needed
+- **Ollama (local):** qwen2.5-vl:7b — ~5.5 GB VRAM, fits any GPU
+- **vLLM (local):** UI-TARS-1.5-7B (ByteDance) — ~18 GB VRAM (FP16), fits RTX 4090
+- **Anthropic API:** claude-sonnet-4-20250514 — no GPU needed
+- **OpenAI API:** gpt-4o — no GPU needed
+- All use OpenAI-compatible `/v1/chat/completions` protocol
 
-## Prompt Template
+## Architecture
 
-Uses UI-TARS COMPUTER_USE prompt. Actions: click, double_click, right_click,
-drag, hotkey, type, scroll, wait, finished.
+```
+Agent → MCP tool call → FastMCP (/mcp)
+  → operators/computer.py: capture_screenshot (mss)
+  → operators/vlm_client.py: call_vlm (httpx POST /v1/chat/completions)
+  → operators/computer.py: parse_action (regex) → execute_action (pyautogui)
+  → loop until finished() or max_steps
+```
+
+Screenshot → VLM prompt with UI-TARS action format → parse thought/action → execute
+pyautogui action → append to history → repeat.
+
+## Safety
+
+- pyautogui.FAILSAFE = True — move mouse to corner (0,0) to abort
+- pyautogui.PAUSE = 0.3 — 300ms between actions
+- max_steps limit prevents infinite loops
+- Local VLM (Ollama): screenshots never leave your machine
+- Cloud VLM: screenshots sent to provider API
 
 ## Dependencies
 
 Python: fastmcp>=3.2, fastapi>=0.115, uvicorn, httpx, ui-tars, mss, pyautogui, pillow
-Node: react 18, vite 5, typescript 5.6
+Node (webapp): react 18, vite 5, typescript 5.6
