@@ -6,16 +6,20 @@ if ($Headless -and ($Host.UI.RawUI.WindowTitle -notmatch 'Hidden')) {
 }
 $WindowStyle = if ($Headless) { 'Hidden' } else { 'Normal' }
 
-$ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 $backendPort = 10976
 $frontendPort = 10977
 
-foreach ($p in $backendPort, $frontendPort) {
-    Get-NetTCPConnection -LocalPort $p -ErrorAction SilentlyContinue |
-        ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+# Kill port zombies (best-effort — may need admin, don't crash if it fails)
+try {
+    foreach ($p in $backendPort, $frontendPort) {
+        Get-NetTCPConnection -LocalPort $p -ErrorAction SilentlyContinue |
+            ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+    }
+} catch {
+    Write-Host "[uitars-mcp] Port cleanup skipped (may need admin) — continuing..."
 }
 
 Write-Host "[uitars-mcp] Starting backend on port $backendPort..."
@@ -34,7 +38,9 @@ for ($i = 0; $i -lt 30; $i++) {
     }
 }
 if (-not $ready) {
-    Write-Warning "[uitars-mcp] Backend did not respond in 15s — continuing anyway."
+    Write-Host "[uitars-mcp] Backend did not respond — check the uvicorn window for errors."
+    Write-Host "[uitars-mcp] Is a VLM running? (Ollama, vLLM, or cloud API)"
+    Write-Host "[uitars-mcp] Starting frontend anyway..."
 }
 
 Set-Location (Join-Path $root "web_sota")
