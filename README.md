@@ -3,9 +3,10 @@
 [![FastMCP](https://img.shields.io/badge/FastMCP-3.2-blue)](https://github.com/jlowin/fastmcp)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.2.0--alpha-blue)](CHANGELOG.md)
+[![Status](https://img.shields.io/badge/Status-Beta-yellow)](CHANGELOG.md)
 [![MCP Tools](https://img.shields.io/badge/MCP_Tools-9-orange)](docs/tools-reference.md)
-[![VLM Backends](https://img.shields.io/badge/VLM-4_providers-purple)](docs/configuration.md)
+[![Tests](https://img.shields.io/badge/Tests-14_passing-brightgreen)](tests/)
+[![Pre-commit](https://img.shields.io/badge/Pre--commit-enabled-lightgrey)](.pre-commit-config.yaml)
 
 > **Tell your computer what to do. It does it.**
 

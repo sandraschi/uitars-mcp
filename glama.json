@@ -1,8 +1,8 @@
 {
   "name": "uitars-mcp",
-  "version": "0.1.0",
-  "description": "UI-TARS MCP — desktop GUI agent server with MCP tools",
+  "version": "0.2.0-beta",
+  "description": "Desktop + browser GUI agent MCP server. VLM-powered: screenshot → vision model → mouse/keyboard/Playwright actions. 9 MCP tools.",
   "transport": "http",
-  "tags": ["gui-agent", "computer-use", "desktop-automation", "vision"],
+  "tags": ["gui-agent", "computer-use", "desktop-automation", "browser-automation", "vision-language-model", "playwright"],
   "repository": "https://github.com/sanderschipal/uitars-mcp"
 }
