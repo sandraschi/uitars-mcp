@@ -44,9 +44,14 @@ if (-not $ready) {
 }
 
 Set-Location (Join-Path $root "web_sota")
-if (-not (Test-Path "node_modules")) {
+if (-not (Test-Path "node_modules\.bin\vite")) {
     Write-Host "[uitars-mcp] Installing frontend dependencies..."
     npm install
+    if (-not (Test-Path "node_modules\.bin\vite")) {
+        Write-Host "[uitars-mcp] ERROR: npm install failed — vite not found. Check network."
+        Read-Host "Press Enter to exit"
+        exit 1
+    }
 }
 
 Start-Process "http://127.0.0.1:$frontendPort/"
