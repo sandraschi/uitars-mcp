@@ -118,6 +118,8 @@ async def api_execute(body: dict):
     config.max_steps = max_steps
     try:
         result = await run_task(task)
+    except Exception as exc:
+        result = {"success": False, "error": str(exc)}
     finally:
         config.max_steps = original_max
     return result
@@ -131,7 +133,10 @@ async def api_browser_navigate(body: dict):
     url = body.get("url", "")
     if not url:
         return {"success": False, "error": "url is required"}, 400
-    return await navigate_to(url)
+    try:
+        return await navigate_to(url)
+    except Exception as exc:
+        return {"success": False, "error": str(exc)}
 
 
 @app.post("/api/browser/execute")
@@ -148,6 +153,8 @@ async def api_browser_execute(body: dict):
     config.max_steps = max_steps
     try:
         result = await run_browser_task(task, start_url)
+    except Exception as exc:
+        result = {"success": False, "error": str(exc)}
     finally:
         config.max_steps = original_max
     return result

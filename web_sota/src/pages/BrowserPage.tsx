@@ -7,16 +7,26 @@ export function BrowserPage() {
   const [pageInfo, setPageInfo] = useState<any>(null);
   const [result, setResult] = useState<any>(null);
 
+  const callApi = async (path: string, body?: any): Promise<any> => {
+    const r = await fetch(path, {
+      method: body ? "POST" : "GET",
+      headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const text = await r.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(text.slice(0, 200) || `HTTP ${r.status}: ${r.statusText}`);
+    }
+  };
+
   const navigate = async () => {
     if (!url.trim()) return;
     setRunning(true); setPageInfo(null); setResult(null);
     log(`Navigate: ${url.trim()}`);
     try {
-      const r = await fetch("/api/browser/navigate", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
-      });
-      const d = await r.json();
+      const d = await callApi("/api/browser/navigate", { url: url.trim() });
       setPageInfo(d);
       log(`Page: ${d.title || d.url}`);
     } catch (e: any) { log(e.message, "error"); }
@@ -28,11 +38,7 @@ export function BrowserPage() {
     setRunning(true); setResult(null);
     log(`Browser task: ${task.trim()}`);
     try {
-      const r = await fetch("/api/browser/execute", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task: task.trim() }),
-      });
-      const d = await r.json();
+      const d = await callApi("/api/browser/execute", { task: task.trim() });
       setResult(d);
       log(`Result: ${d.success ? "OK" : "Failed"} — ${d.message}`);
     } catch (e: any) { log(e.message, "error"); }

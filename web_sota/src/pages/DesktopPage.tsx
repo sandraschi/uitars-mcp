@@ -8,15 +8,26 @@ export function DesktopPage() {
   const [error, setError] = useState<string | null>(null);
   const shotRef = useRef<HTMLDivElement>(null);
 
+  const callApi = async (path: string, body?: any): Promise<any> => {
+    const r = await fetch(path, {
+      method: body ? "POST" : "GET",
+      headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const text = await r.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(text.slice(0, 200) || `HTTP ${r.status}: ${r.statusText}`);
+    }
+  };
+
   const refreshShot = useCallback(async () => {
     try {
-      const r = await fetch("/api/screenshot");
-      const d = await r.json();
+      const d = await callApi("/api/screenshot");
       if (d.success) setDesktopShot(d.image_base64);
       log("Desktop screenshot captured");
-    } catch (e: any) {
-      log(e.message || "Screenshot failed", "error");
-    }
+    } catch (e: any) { log(e.message || "Screenshot failed", "error"); }
   }, []);
 
   useEffect(() => { refreshShot(); }, [refreshShot]);
@@ -26,13 +37,9 @@ export function DesktopPage() {
     setRunning(true); setError(null); setResult(null);
     log(`Task: ${task.trim()}`);
     try {
-      const r = await fetch("/api/execute", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task: task.trim() }),
-      });
-      const d = await r.json();
+      const d = await callApi("/api/execute", { task: task.trim() });
       setResult(d);
-      log(`Result: ${d.success ? "OK" : "Failed"} — ${d.message}`);
+      log(`Result: ${d.success ? "OK" : "Failed"} - ${d.message || d.error}`);
       refreshShot();
     } catch (e: any) {
       setError(e.message);
