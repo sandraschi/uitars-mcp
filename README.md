@@ -31,15 +31,16 @@ $env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
 
 ## Comparison
 
-| | uitars-mcp | pywinauto-mcp | autohotkey-mcp | Manual automation |
+| | uitars-mcp | pywinauto-mcp | autohotkey-mcp | Manual (human) |
 |---|---|---|---|---|
 | **Method** | Visual grounding (VLM) | UI element tree (Win32) | Scripted keybinds | Human clicking |
 | **Works with** | Any visible UI | Windows native apps only | Pre-defined hotkeys | Everything |
+| **Speed** | ~2-5s per action (VLM inference) | ~10ms (direct API) | ~1ms (native hook) | ~500ms-2s (varies with coffee) |
 | **Flexibility** | Adapts to any layout, any app | Fixed element paths break on UI changes | Rigid scripts | Requires human |
 | **Setup** | Point at a VLM endpoint | None (Win32 APIs) | Install AHK v2 | None |
-| **Accuracy** | Dependent on VLM quality | 100% for known elements | 100% for scripted flows | 100% |
-| **Browser** | Built-in (Playwright) | No | No | No |
-| **Best for** | General purpose automation, unknown UIs | Precise Windows automation | Repetitive hotkey workflows | One-off tasks |
+| **Accuracy** | Dependent on VLM quality | 100% for known elements | 100% for scripted flows | 100%* |
+| **Browser** | Built-in (Playwright) | No | No | Yes |
+| **Best for** | Unknown UIs, general automation | Precise Windows automation | Repetitive hotkey workflows | One-off tasks |
 
 ## MCP Tools (8)
 
