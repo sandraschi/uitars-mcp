@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__
+from .config import config
 from .operators.browser import close_browser, navigate_to, run_browser_task
 from .operators.computer import capture_screenshot, run_task
 from .operators.vlm_client import check_vlm_health
@@ -55,6 +56,38 @@ async def api_status():
     return {
         "vlm": vlm_health,
         "version": __version__,
+        "browser_available": config.browser_available,
+    }
+
+
+@app.get("/api/capabilities")
+async def api_capabilities():
+    return {
+        "status": "ok",
+        "server": {"name": "uitars-mcp", "version": __version__, "fastmcp": "3.2"},
+        "tool_surface": {
+            "total": 9,
+            "portmanteau_count": 0,
+            "atomic_count": 9,
+            "atomic_tools": [
+                "uitars_execute", "uitars_screenshot", "uitars_click", "uitars_type",
+                "uitars_browser_navigate", "uitars_browser_execute", "uitars_browser_close",
+                "uitars_status", "uitars_help",
+            ],
+        },
+        "features": {
+            "sampling": False,
+            "agentic_workflows": False,
+            "prompts": False,
+            "resources": False,
+            "skills": False,
+        },
+        "runtime": {
+            "transport": "http",
+            "surface_mode": "atomic",
+            "browser_available": config.browser_available,
+        },
+        "timestamp": "2026-05-14T00:00:00Z",
     }
 
 
