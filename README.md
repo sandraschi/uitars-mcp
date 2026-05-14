@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-0.2.0--alpha-blue)](CHANGELOG.md)
-[![MCP Tools](https://img.shields.io/badge/MCP_Tools-8-orange)](docs/tools-reference.md)
+[![MCP Tools](https://img.shields.io/badge/MCP_Tools-9-orange)](docs/tools-reference.md)
 [![VLM Backends](https://img.shields.io/badge/VLM-4_providers-purple)](docs/configuration.md)
 
 > **Tell your computer what to do. It does it.**
@@ -55,18 +55,23 @@ $env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
 ### Browser
 | Tool | What your agent says |
 |------|---------------------|
-| `uitars_browser_navigate` | "Go to github.com" |
+| `uitars_browser_navigate` | "Open github.com and show me the page" |
 | `uitars_browser_execute` | "Search for Python, click the first result" |
-| `uitars_browser_close` | "Close the browser" |
+| `uitars_browser_close` | "Done with the browser, free the resources" |
+| `uitars_status` | "Are VLM and browser both healthy?" |
 
 ## VLM Providers
 
-| Provider | Model | VRAM | Setup |
-|----------|-------|------|-------|
-| **Ollama** (local) | qwen2.5-vl:7b | ~5.5 GB | `ollama pull qwen2.5-vl:7b` |
-| **vLLM** (local) | UI-TARS-1.5-7B | ~18 GB | pip install vllm |
-| **Anthropic** (cloud) | claude-sonnet-4 | 0 GB | API key |
-| **OpenAI** (cloud) | gpt-4o | 0 GB | API key |
+All providers must speak the **OpenAI `/v1/chat/completions` API** and accept images in `image_url` content blocks. The model must be **vision-capable** (screenshot → text).
+
+| Provider | Model | GPU needed | Setup |
+|----------|-------|-----------|-------|
+| **Ollama** (local) | `qwen2.5-vl:7b` | ~5.5 GB | `ollama pull qwen2.5-vl:7b` |
+| **vLLM** (local) | `ByteDance-Seed/UI-TARS-1.5-7B` | ~18 GB | pip install vllm |
+| **OpenAI** (cloud) | `gpt-4o` | — | `$env:UITARS_VLM_API_KEY = "sk-..."` |
+| **LiteLLM proxy** (local) | any VLM | — | Proxies any provider to OpenAI format |
+
+Anthropic Claude is **not** directly supported — it uses a different API protocol. Use [LiteLLM](https://github.com/BerriAI/litellm) as a translation proxy if you need it.
 
 ## Fleet Integration
 

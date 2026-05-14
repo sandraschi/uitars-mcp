@@ -48,7 +48,16 @@ $env:UITARS_VLM_MODEL = "ByteDance-Seed/UI-TARS-1.5-7B"
 ### Option C: Cloud API (no GPU)
 
 ```powershell
-$env:UITARS_VLM_BASE_URL = "https://api.anthropic.com/v1"
+$env:UITARS_VLM_BASE_URL = "https://api.openai.com/v1"
+$env:UITARS_VLM_MODEL = "gpt-4o"
+$env:UITARS_VLM_API_KEY = "sk-..."
+```
+
+For Anthropic Claude, use LiteLLM as an OpenAI-compatible proxy:
+```powershell
+pip install litellm
+litellm --model claude-sonnet-4-20250514
+$env:UITARS_VLM_BASE_URL = "http://127.0.0.1:4000/v1"
 $env:UITARS_VLM_MODEL = "claude-sonnet-4-20250514"
 $env:UITARS_VLM_API_KEY = "sk-ant-..."
 ```

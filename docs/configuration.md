@@ -43,14 +43,6 @@ $env:UITARS_VLM_MODEL = "ByteDance-Seed/UI-TARS-1.5-7B"
 $env:UITARS_VLM_API_KEY = "not-needed"
 ```
 
-### Anthropic
-
-```powershell
-$env:UITARS_VLM_BASE_URL = "https://api.anthropic.com/v1"
-$env:UITARS_VLM_MODEL = "claude-sonnet-4-20250514"
-$env:UITARS_VLM_API_KEY = "sk-ant-..."
-```
-
 ### OpenAI
 
 ```powershell
@@ -59,6 +51,21 @@ $env:UITARS_VLM_MODEL = "gpt-4o"
 $env:UITARS_VLM_API_KEY = "sk-..."
 ```
 
+### LiteLLM (proxy for Anthropic or any provider)
+
+LiteLLM translates any provider's API to OpenAI-compatible format:
+
+```powershell
+pip install litellm
+litellm --model claude-sonnet-4-20250514
+
+$env:UITARS_VLM_BASE_URL = "http://127.0.0.1:4000/v1"
+$env:UITARS_VLM_MODEL = "claude-sonnet-4-20250514"
+$env:UITARS_VLM_API_KEY = "sk-ant-..."
+```
+
+Anthropic's native Messages API is **not** OpenAI-compatible and won't work directly. Use LiteLLM as a translation proxy.
+
 ## VRAM Budget
 
 | Configuration | VRAM | Fits |
@@ -66,4 +73,4 @@ $env:UITARS_VLM_API_KEY = "sk-..."
 | Ollama qwen2.5-vl:7b (Q4_K_M) | ~5.5 GB | Any GPU |
 | vLLM UI-TARS-1.5-7B (FP16) | ~18 GB | RTX 4090 (24 GB) |
 | vLLM UI-TARS-1.5-7B (AWQ) | ~6.5 GB | Any GPU |
-| Cloud API | 0 GB | No GPU needed |
+| Cloud API (OpenAI / LiteLLM proxy) | — | No GPU needed |
