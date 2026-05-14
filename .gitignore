@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.venv/
+uv.lock
+
+# Node
+node_modules/
+web_sota/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# Env
+.env
+.env.local
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# MCP
+.mcpb/

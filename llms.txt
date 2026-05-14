@@ -1,0 +1,17 @@
+# uitars-mcp
+
+Desktop GUI agent MCP server powered by UI-TARS vision-language models.
+
+## Quick Links
+- README.md — project overview
+- SPEC.md — full architecture and design decisions
+- pyproject.toml — Python dependencies
+- web_sota/ — Vite + React frontend
+- src/uitars_mcp/ — Python backend (FastMCP + FastAPI)
+
+## Key Files
+- src/uitars_mcp/server.py — MCP tool definitions
+- src/uitars_mcp/app.py — FastAPI REST API
+- src/uitars_mcp/operators/computer.py — screenshot + action loop
+- src/uitars_mcp/operators/vlm_client.py — VLM API client
+- web_sota/src/App.tsx — React frontend

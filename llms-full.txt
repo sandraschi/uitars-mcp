@@ -1,0 +1,57 @@
+# uitars-mcp — Full LLM Documentation
+
+## Project Overview
+
+uitars-mcp is a desktop GUI agent MCP server that exposes natural language computer
+control as MCP tools. It wraps the UI-TARS vision-language model (or any
+OpenAI-compatible VLM) in a screenshot→action→execute loop.
+
+## Architecture
+
+Single uvicorn process serves:
+- FastAPI REST API on port 10976
+- FastMCP HTTP endpoint at /mcp
+- Vite + React frontend on port 10977 (proxies /api and /mcp to 10976)
+
+## MCP Tools
+
+1. uitars_execute(task, max_steps=15) — Full GUI task execution
+2. uitars_screenshot() — Capture desktop as base64 PNG
+3. uitars_click(x, y, button="left") — Click at coordinates
+4. uitars_type(text) — Type text at current focus
+
+## REST API
+
+- GET  /api/health       — Backend readiness
+- GET  /api/status        — VLM model health + info
+- GET  /api/screenshot    — Current desktop capture
+- POST /api/execute       — Execute GUI task {task, max_steps}
+- *    /mcp               — FastMCP HTTP endpoint
+
+## Configuration (Environment Variables)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| UITARS_PORT | 10976 | Backend port |
+| UITARS_FRONTEND_PORT | 10977 | Frontend port |
+| UITARS_VLM_BASE_URL | http://127.0.0.1:11434/v1 | VLM endpoint |
+| UITARS_VLM_MODEL | qwen2.5-vl:7b | Model name |
+| UITARS_VLM_API_KEY | ollama | API key |
+| UITARS_MAX_STEPS | 15 | Max action steps |
+
+## VLM Providers
+
+- Ollama (local): qwen2.5-vl:7b — ~5.5GB VRAM
+- vLLM (local): UI-TARS-1.5-7B — ~14GB VRAM (FP16)
+- Anthropic API: claude-sonnet-4-20250514 — no GPU needed
+- OpenAI API: gpt-4o — no GPU needed
+
+## Prompt Template
+
+Uses UI-TARS COMPUTER_USE prompt. Actions: click, double_click, right_click,
+drag, hotkey, type, scroll, wait, finished.
+
+## Dependencies
+
+Python: fastmcp>=3.2, fastapi>=0.115, uvicorn, httpx, ui-tars, mss, pyautogui, pillow
+Node: react 18, vite 5, typescript 5.6

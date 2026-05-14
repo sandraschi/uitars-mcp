@@ -1,0 +1,8 @@
+{
+  "name": "uitars-mcp",
+  "version": "0.1.0",
+  "description": "UI-TARS MCP — desktop GUI agent server with MCP tools",
+  "transport": "http",
+  "tags": ["gui-agent", "computer-use", "desktop-automation", "vision"],
+  "repository": "https://github.com/sanderschipal/uitars-mcp"
+}
