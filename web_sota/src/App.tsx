@@ -290,7 +290,7 @@ function App() {
         </>
       )}
 
-      <div style={s.foot}>UI-TARS MCP v0.2.0 — Ports 10976/10977 — Desktop + Browser Agent</div>
+      <div style={s.foot}>UI-TARS MCP v0.2.0-beta — Port 10976 — Desktop + Browser Agent</div>
     </div>
   );
 }

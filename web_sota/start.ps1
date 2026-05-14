@@ -10,10 +10,9 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 $backendPort = 10976
-$frontendPort = 10977
 
 try {
-    foreach ($p in $backendPort, $frontendPort) {
+    foreach ($p in $backendPort) {
         Get-NetTCPConnection -LocalPort $p -ErrorAction SilentlyContinue |
             ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
     }
@@ -21,53 +20,37 @@ try {
     Write-Host "[uitars-mcp] Port cleanup skipped (may need admin)"
 }
 
-Write-Host "[uitars-mcp] Starting backend on port $backendPort..."
+if (-not (Test-Path "web_sota\dist\index.html")) {
+    Write-Host "[uitars-mcp] Building frontend..."
+    Set-Location web_sota
+    if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
+        npm install --no-audit --no-fund
+    }
+    npx vite build
+    Set-Location $root
+}
+
+Write-Host "[uitars-mcp] Starting server on http://127.0.0.1:${backendPort}/"
 Start-Process -FilePath "uv" -ArgumentList "run", "uitars-mcp", "--serve", "--port", "$backendPort" -WorkingDirectory $root -WindowStyle Hidden
 
-Write-Host "[uitars-mcp] Waiting for backend..."
+Write-Host "[uitars-mcp] Waiting for server..."
 $ready = $false
 for ($i = 0; $i -lt 30; $i++) {
     try {
         $null = Invoke-WebRequest -Uri "http://127.0.0.1:${backendPort}/api/health" -UseBasicParsing -TimeoutSec 2
         $ready = $true
-        Write-Host "[uitars-mcp] Backend ready."
+        Write-Host "[uitars-mcp] Server ready."
         break
     } catch {
         Start-Sleep -Milliseconds 500
     }
 }
 if (-not $ready) {
-    Write-Host "[uitars-mcp] Backend did not respond - check uvicorn window."
+    Write-Host "[uitars-mcp] Server did not respond - check uvicorn window."
     Write-Host "[uitars-mcp] Is a VLM running? (Ollama, vLLM, or cloud API)"
-    Write-Host "[uitars-mcp] Starting frontend anyway..."
 }
 
-Set-Location (Join-Path $root "web_sota")
-if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-    Write-Host "[uitars-mcp] Installing frontend dependencies (this may take a minute)..."
-    $installJob = Start-Job -ScriptBlock {
-        Set-Location $using:root
-        Set-Location web_sota
-        npm install --no-audit --no-fund 2>&1
-    }
-    $installJob | Wait-Job -Timeout 120 | Out-Null
-    $installOutput = $installJob | Receive-Job
-    $installJob | Remove-Job -Force
+Start-Process "http://127.0.0.1:${backendPort}/"
 
-    if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-        Write-Host "[uitars-mcp] npm install timed out or failed. Trying cached install..."
-        npm install --prefer-offline --no-audit --no-fund 2>&1
-    }
-
-    if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-        Write-Host "[uitars-mcp] ERROR: vite.cmd still not found."
-        Write-Host "[uitars-mcp] Try manually: cd web_sota && npm install"
-        Read-Host "Press Enter to exit"
-        exit 1
-    }
-    Write-Host "[uitars-mcp] Frontend dependencies installed."
-}
-
-Write-Host "[uitars-mcp] Starting frontend on port $frontendPort (Ctrl+C to stop)"
-Start-Process "http://127.0.0.1:${frontendPort}/"
-npm run dev
+Write-Host "[uitars-mcp] Running. Browser opened. Ctrl+C in uvicorn window to stop."
+Read-Host "Press Enter to exit"
