@@ -23,7 +23,7 @@ $env:UITARS_VLM_MODEL = "qwen2.5-vl:7b"
 .\web_sota\start.ps1
 ```
 
-The backend serves the webapp directly on port 10976 — no Node.js, no npm, no Vite dev server needed at runtime. One `uv run` process. One port. One `start.bat`.
+The backend serves the API and MCP on port 10976. The Vite frontend runs on 10977 and proxies `/api` + `/mcp` to the backend. One `start.bat` launches both.
 
 ## What it does
 
@@ -90,7 +90,7 @@ Anthropic Claude is **not** directly supported — it uses a different API proto
 }
 ```
 
-Port **10976** serves everything — REST API, MCP `/mcp`, and the webapp (pre-built `dist/` served as static files). Port 10977 is Vite dev only (optional, for frontend development).
+Port **10976** (backend: FastAPI + MCP `/mcp`) and **10977** (frontend: Vite dev, proxies → 10976). Adjacent to chitchat (10974/10975).
 
 ## Docs
 

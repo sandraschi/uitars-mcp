@@ -17,8 +17,12 @@ export function Topbar() {
 
   useEffect(() => {
     const check = async () => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 5000);
+
       try {
-        const h = await fetch("/api/health");
+        const h = await fetch("/api/health", { signal: ctrl.signal });
+        clearTimeout(timer);
         if (h.ok) {
           const d = await h.json();
           setStatus((s) => ({ ...s, backendOk: true, version: d.version || "" }));
@@ -26,7 +30,7 @@ export function Topbar() {
       } catch { setStatus((s) => ({ ...s, backendOk: false })); }
 
       try {
-        const s = await fetch("/api/status");
+        const s = await fetch("/api/status", { signal: AbortSignal.timeout(5000) });
         if (s.ok) {
           const d = await s.json();
           setStatus((prev) => ({
@@ -50,6 +54,7 @@ export function Topbar() {
       borderBottom: "1px solid #21262d", zIndex: 30,
     },
     title: { fontSize: 16, fontWeight: 600, color: "#f0f6fc" },
+    info: { display: "flex", alignItems: "center", gap: 12 },
     badges: { display: "flex", gap: 8, alignItems: "center" },
     badge: (ok: boolean) => ({
       padding: "3px 10px", borderRadius: 10, fontSize: 11, fontWeight: 500,
@@ -61,7 +66,10 @@ export function Topbar() {
 
   return (
     <header style={s.topbar}>
-      <div style={s.title}>UI-TARS MCP — Desktop + Browser Agent</div>
+      <div style={s.info}>
+        <div style={s.title}>UI-TARS MCP</div>
+        <span style={{ fontSize: 10, color: "#484f58" }}>10976/10977</span>
+      </div>
       <div style={s.badges}>
         {status.vlmModel && <span style={s.model}>{status.vlmModel}</span>}
         <span style={s.badge(status.vlmOk)}>VLM</span>

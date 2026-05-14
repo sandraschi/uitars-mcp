@@ -10,9 +10,10 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 $backendPort = 10976
+$frontendPort = 10977
 
 try {
-    foreach ($p in $backendPort) {
+    foreach ($p in $backendPort, $frontendPort) {
         Get-NetTCPConnection -LocalPort $p -ErrorAction SilentlyContinue |
             ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
     }
@@ -20,37 +21,32 @@ try {
     Write-Host "[uitars-mcp] Port cleanup skipped (may need admin)"
 }
 
-if (-not (Test-Path "web_sota\dist\index.html")) {
-    Write-Host "[uitars-mcp] Building frontend..."
-    Set-Location web_sota
-    if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-        npm install --no-audit --no-fund
-    }
-    npx vite build
-    Set-Location $root
-}
-
-Write-Host "[uitars-mcp] Starting server on http://127.0.0.1:${backendPort}/"
+Write-Host "[uitars-mcp] Starting backend on port $backendPort..."
 Start-Process -FilePath "uv" -ArgumentList "run", "uitars-mcp", "--serve", "--port", "$backendPort" -WorkingDirectory $root -WindowStyle Hidden
 
-Write-Host "[uitars-mcp] Waiting for server..."
+Write-Host "[uitars-mcp] Waiting for backend..."
 $ready = $false
 for ($i = 0; $i -lt 30; $i++) {
     try {
         $null = Invoke-WebRequest -Uri "http://127.0.0.1:${backendPort}/api/health" -UseBasicParsing -TimeoutSec 2
         $ready = $true
-        Write-Host "[uitars-mcp] Server ready."
+        Write-Host "[uitars-mcp] Backend ready."
         break
     } catch {
         Start-Sleep -Milliseconds 500
     }
 }
 if (-not $ready) {
-    Write-Host "[uitars-mcp] Server did not respond - check uvicorn window."
-    Write-Host "[uitars-mcp] Is a VLM running? (Ollama, vLLM, or cloud API)"
+    Write-Host "[uitars-mcp] Backend did not respond - check uvicorn window."
 }
 
-Start-Process "http://127.0.0.1:${backendPort}/"
+Set-Location (Join-Path $root "web_sota")
+if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
+    Write-Host "[uitars-mcp] Installing frontend deps (one-time)..."
+    npm install --no-audit --no-fund
+}
 
-Write-Host "[uitars-mcp] Running. Browser opened. Ctrl+C in uvicorn window to stop."
-Read-Host "Press Enter to exit"
+Start-Process "http://127.0.0.1:${frontendPort}/"
+
+Write-Host "[uitars-mcp] Starting frontend on port $frontendPort (Ctrl+C to stop)"
+npx vite --port $frontendPort

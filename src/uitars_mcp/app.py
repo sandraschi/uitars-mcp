@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from . import __version__
 from .config import config
@@ -165,12 +163,5 @@ async def api_browser_close():
     close_browser()
     return {"success": True}
 
-
-# ── Static Frontend ──────────────────────────────────────────────────
-
-_DIST = Path(__file__).resolve().parent.parent.parent / "web_sota" / "dist"
-
-if _DIST.exists() and (_DIST / "index.html").exists():
-    app.mount("/", StaticFiles(directory=str(_DIST), html=True), name="frontend")
 
 app.mount("/mcp", mcp.http_app())
