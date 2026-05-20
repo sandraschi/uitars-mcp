@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import os
 from typing import Annotated
 
 from fastmcp import FastMCP
+from fastmcp.server import create_proxy
 from fastmcp.server.middleware.logging import LoggingMiddleware
 from pydantic import Field
 
@@ -19,6 +21,19 @@ mcp = FastMCP(
 )
 
 mcp.add_middleware(LoggingMiddleware())
+
+# MCP Bridge: ProxyProvider for multi-server federation
+_bridge_proxies = []
+bridge_urls = os.getenv("MCP_BRIDGE_URLS", "")
+if bridge_urls:
+    for url in bridge_urls.split(","):
+        url = url.strip()
+        if url:
+            try:
+                mcp.add_provider(create_proxy(url))
+                _bridge_proxies.append(url)
+            except Exception:
+                pass
 
 
 @mcp.tool(name="uitars_execute", annotations={"readOnlyHint": False})
