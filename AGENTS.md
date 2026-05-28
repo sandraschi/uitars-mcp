@@ -100,3 +100,5 @@ No code changes needed. For non-OpenAI-compatible providers (e.g. Anthropic), us
 - [x] llms.txt + llms-full.txt
 - [x] justfile with serve/test/lint/fmt
 - [x] Apache 2.0 license
+
+Install docs: follow mcp-central-docs/standards/AGENT_INSTALL_REFERENCE.md
