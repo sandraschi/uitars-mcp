@@ -1,8 +1,8 @@
-# uitars-mcp justfile
+﻿# uitars-mcp justfile
 
 # Open the interactive recipe dashboard in the browser
 default:
-    @pwsh.exe -NoProfile -ExecutionPolicy Bypass -File ../mcp-central-docs/scripts/just-dashboard.ps1 -Path .
+    @just --list
 
 # ── Run ────────────────────────────────────────────────────────────
 
@@ -71,3 +71,4 @@ clean:
 # Sync and update lockfile
 lock:
     uv lock
+
