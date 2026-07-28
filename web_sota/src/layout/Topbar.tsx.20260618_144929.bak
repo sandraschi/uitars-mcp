@@ -1,4 +1,3 @@
-import { API_BASE } from "../lib/api";
 import { useEffect, useState } from "react";
 
 interface Status {
@@ -22,7 +21,7 @@ export function Topbar() {
       const timer = setTimeout(() => ctrl.abort(), 5000);
 
       try {
-        const h = await fetch(API_BASE + "/api/health", { signal: ctrl.signal });
+        const h = await fetch("/api/health", { signal: ctrl.signal });
         clearTimeout(timer);
         if (h.ok) {
           const d = await h.json();
@@ -31,7 +30,7 @@ export function Topbar() {
       } catch { setStatus((s) => ({ ...s, backendOk: false })); }
 
       try {
-        const s = await fetch(API_BASE + "/api/status", { signal: AbortSignal.timeout(5000) });
+        const s = await fetch("/api/status", { signal: AbortSignal.timeout(5000) });
         if (s.ok) {
           const d = await s.json();
           setStatus((prev) => ({

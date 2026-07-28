@@ -7,6 +7,7 @@ const NAV = [
   { id: "browser", label: "Browser", icon: "◎" },
   { id: "demo", label: "Demo", icon: "◉" },
   { id: "help", label: "Help", icon: "?" },
+  { id: "logs", label: "Logs", icon: "\u25A3" },
 ] as const;
 
 export function Sidebar() {

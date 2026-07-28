@@ -29,22 +29,11 @@ app = FastAPI(
     description="Desktop GUI agent MCP server — natural language computer control",
     version=__version__,
     lifespan=lifespan,
-    docs_url="/docs",
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:10976",
-        "http://localhost:10977",
-        "http://127.0.0.1:10976",
-        "http://127.0.0.1:10977",
-        "http://tauri.localhost",
-        "https://tauri.localhost",
-        "tauri://localhost",
-    ],
-    allow_origin_regex=r"https?://(?:[a-zA-Z0-9-]+\.ts\.net|.*?\.tail-[a-f0-9]+\.ts\.net|tauri\.localhost|localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|100\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?$|^tauri://localhost$",
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -56,8 +45,6 @@ async def api_health():
         "status": "ok",
         "version": __version__,
         "server": "uitars-mcp",
-        "tool_count": 9,
-        "uptime_seconds": 0,
     }
 
 
@@ -73,21 +60,18 @@ async def api_status():
 
 @app.get("/api/capabilities")
 async def api_capabilities():
-    from datetime import UTC, datetime
-
-    from .server import mcp
-
-    tools = await mcp.list_tools()
-    tool_names = [t.name for t in tools]
     return {
         "status": "ok",
-        "server": {"name": "uitars-mcp", "version": __version__, "fastmcp": "3.4"},
+        "server": {"name": "uitars-mcp", "version": __version__, "fastmcp": "3.2"},
         "tool_surface": {
-            "total": len(tool_names),
+            "total": 9,
             "portmanteau_count": 0,
-            "atomic_count": len(tool_names),
-            "portmanteau_tools": [],
-            "atomic_tools": tool_names,
+            "atomic_count": 9,
+            "atomic_tools": [
+                "uitars_execute", "uitars_screenshot", "uitars_click", "uitars_type",
+                "uitars_browser_navigate", "uitars_browser_execute", "uitars_browser_close",
+                "uitars_status", "uitars_help",
+            ],
         },
         "features": {
             "sampling": False,
@@ -96,13 +80,12 @@ async def api_capabilities():
             "resources": False,
             "skills": False,
         },
-        "inventory": {"workflow_tools": [], "prompt_names": [], "resource_uris": [], "skill_uris": []},
         "runtime": {
             "transport": "http",
             "surface_mode": "atomic",
             "browser_available": config.browser_available,
         },
-        "timestamp": datetime.now(UTC).isoformat(),
+        "timestamp": "2026-05-14T00:00:00Z",
     }
 
 
@@ -181,40 +164,4 @@ async def api_browser_close():
     return {"success": True}
 
 
-@app.get("/api/v1/diagnostics")
-async def api_diagnostics():
-    from .operators.vlm_client import check_vlm_health
-
-    vlm_health = await check_vlm_health()
-    return {
-        "status": "ok",
-        "server": "uitars-mcp",
-        "version": __version__,
-        "tool_count": 9,
-        "tools": [
-            {"name": "uitars_execute"},
-            {"name": "uitars_screenshot"},
-            {"name": "uitars_click"},
-            {"name": "uitars_type"},
-            {"name": "uitars_browser_navigate"},
-            {"name": "uitars_browser_execute"},
-            {"name": "uitars_browser_close"},
-            {"name": "uitars_status"},
-            {"name": "uitars_help"},
-            {"name": "uitars_shutdown"},
-        ],
-        "system": {"windows": True},
-        "errors": [],
-        "vlm": vlm_health,
-    }
-
-
-@app.post("/api/shutdown")
-async def api_shutdown():
-    import os
-
-    logger.warning("Shutdown requested via REST API")
-    os._exit(0)
-
-
-app.mount("/mcp", mcp.http_app(path="/"))
+app.mount("/mcp", mcp.http_app())

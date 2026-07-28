@@ -1,5 +1,6 @@
 import { HashRouter, useRouter } from "./router";
 import { Sidebar } from "./layout/Sidebar";
+import FloatingChat from "./components/FloatingChat";
 import { Topbar } from "./layout/Topbar";
 import { LoggerPanel } from "./layout/LoggerPanel";
 import { Dashboard } from "./pages/Dashboard";
@@ -7,6 +8,7 @@ import { DesktopPage } from "./pages/DesktopPage";
 import { BrowserPage } from "./pages/BrowserPage";
 import { Demo } from "./Demo";
 import { HelpPage } from "./pages/HelpPage";
+import Logging from "./pages/Logging";
 
 function Shell() {
   const { page } = useRouter();
@@ -23,8 +25,9 @@ function Shell() {
       case "desktop": return <DesktopPage />;
       case "browser": return <BrowserPage />;
       case "demo": return <Demo />;
-      case "help": return <HelpPage />;
-      default: return <Dashboard />;
+  case "help": return <HelpPage />;
+  case "logs": return <Logging />;
+  default: return <Dashboard />;
     }
   };
 
@@ -44,6 +47,7 @@ export default function App() {
   return (
     <HashRouter>
       <Shell />
+      <FloatingChat />
     </HashRouter>
   );
 }

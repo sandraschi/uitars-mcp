@@ -1,52 +1,37 @@
-Param([switch]$Headless)
+﻿# Fleet unified launcher - do not edit logic here.
+# Change fleet-start.config.ps1 at the repo root instead.
+param(
+    [switch]$Headless,
+    [switch]$BackendOnly,
+    [switch]$FrontendOnly,
+    [switch]$NoBrowser,
+    [switch]$ReuseIfRunning
+)
 
-if ($Headless -and ($Host.UI.RawUI.WindowTitle -notmatch 'Hidden')) {
-    Start-Process pwsh -ArgumentList '-NoProfile', '-File', $PSCommandPath, '-Headless' -WindowStyle Hidden
-    exit
+$ErrorActionPreference = 'Stop'
+$ReposRoot = if ($env:FLEET_REPOS_ROOT) { $env:FLEET_REPOS_ROOT } else { 'D:\Dev\repos' }
+$EnginePath = Join-Path $ReposRoot 'mcp-central-docs\scripts\Invoke-FleetWebappStart.ps1'
+if (-not (Test-Path -LiteralPath $EnginePath)) {
+    Write-Host "ERROR: Missing fleet start engine: $EnginePath" -ForegroundColor Red
+    exit 1
 }
-$WindowStyle = if ($Headless) { 'Hidden' } else { 'Normal' }
+. $EnginePath
 
-$root = Split-Path -Parent $PSScriptRoot
-Set-Location $root
-
-$backendPort = 10976
-$frontendPort = 10977
-
-try {
-    foreach ($p in $backendPort, $frontendPort) {
-        Get-NetTCPConnection -LocalPort $p -ErrorAction SilentlyContinue |
-            ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
-    }
-} catch {
-    Write-Host "[uitars-mcp] Port cleanup skipped (may need admin)"
-}
-
-Write-Host "[uitars-mcp] Starting backend on port $backendPort..."
-Start-Process -FilePath "uv" -ArgumentList "run", "uitars-mcp", "--serve", "--port", "$backendPort" -WorkingDirectory $root -WindowStyle Hidden
-
-Write-Host "[uitars-mcp] Waiting for backend..."
-$ready = $false
-for ($i = 0; $i -lt 30; $i++) {
-    try {
-        $null = Invoke-WebRequest -Uri "http://127.0.0.1:${backendPort}/api/health" -UseBasicParsing -TimeoutSec 2
-        $ready = $true
-        Write-Host "[uitars-mcp] Backend ready."
+$configCandidates = @(
+    (Join-Path $PSScriptRoot 'fleet-start.config.ps1'),
+    (Join-Path (Split-Path -Parent $PSScriptRoot) 'fleet-start.config.ps1')
+)
+$configPath = $null
+foreach ($candidate in $configCandidates) {
+    if (Test-Path -LiteralPath $candidate) {
+        $configPath = $candidate
         break
-    } catch {
-        Start-Sleep -Milliseconds 500
     }
 }
-if (-not $ready) {
-    Write-Host "[uitars-mcp] Backend did not respond - check uvicorn window."
+if (-not $configPath) {
+    Write-Host 'ERROR: Missing fleet-start.config.ps1 (repo root or beside start.ps1).' -ForegroundColor Red
+    exit 1
 }
 
-Set-Location (Join-Path $root "web_sota")
-if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
-    Write-Host "[uitars-mcp] Installing frontend deps (one-time)..."
-    npm install --no-audit --no-fund
-}
+Start-FleetWebapp @PSBoundParameters -ConfigPath $configPath -LauncherRoot $PSScriptRoot
 
-Start-Process "http://127.0.0.1:${frontendPort}/"
-
-Write-Host "[uitars-mcp] Starting frontend on port $frontendPort (Ctrl+C to stop)"
-npx vite --port $frontendPort

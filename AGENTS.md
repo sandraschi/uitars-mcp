@@ -4,13 +4,13 @@ Instructions for AI agents (Claude Code, OpenCode, Cursor, Hermes) working with 
 
 ## Project
 
-uitars-mcp is a FastMCP 3.2 server that wraps a vision-language model (VLM) to control the desktop and browser via MCP tools. Single uvicorn process serves FastAPI REST API + FastMCP HTTP `/mcp` + static webapp on port 10976.
+uitars-mcp is a FastMCP 3.4+ server that wraps a vision-language model (VLM) to control the desktop and browser via MCP tools. Single uvicorn process serves FastAPI REST API + FastMCP HTTP `/mcp` + static webapp on port 10976.
 
 ## Architecture
 
 ```
 src/uitars_mcp/
-├── server.py       # 9 MCP tools (@mcp.tool decorators)
+├── server.py       # 10 MCP tools (@mcp.tool decorators)
 ├── app.py          # FastAPI REST + capabilities + static files
 ├── config.py       # Env-based config (UITARS_* vars)
 ├── __main__.py     # uvicorn entry: uv run uitars-mcp --serve
@@ -23,7 +23,7 @@ src/uitars_mcp/
 ## Key Conventions
 
 - **Python 3.12+** with `uv` (pyproject.toml + uv.lock)
-- **FastMCP 3.2** tool decorators with `annotations={"readOnlyHint": True/False}`
+- **FastMCP 3.4** tool decorators with `annotations={"readOnlyHint": True/False}`
 - **Pydantic v2** — no `.dict()`, use `.model_dump()`
 - **OpenAI-compatible VLM protocol** — POST `/v1/chat/completions` with `image_url` content blocks
 - **Ruff lint**: fleet-standard rules (`E,F,W,I,B,S,UP,RUF`), line-length 120, double quotes

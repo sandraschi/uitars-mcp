@@ -1,4 +1,8 @@
-﻿# uitars-mcp justfile
+set windows-shell := ["powershell.exe", "-NoProfile", "-Command"]
+
+# uitars-mcp justfile
+import 'scripts/just/fleet.just'
+# uitars-mcp justfile
 
 # Open the interactive recipe dashboard in the browser
 default:
@@ -71,4 +75,3 @@ clean:
 # Sync and update lockfile
 lock:
     uv lock
-

@@ -33,9 +33,7 @@ if bridge_urls:
                 mcp.add_provider(create_proxy(url))
                 _bridge_proxies.append(url)
             except Exception:
-                import logging
-
-                logging.getLogger("uitars-mcp").warning("Bridge proxy failed for %s", url)
+                pass
 
 
 @mcp.tool(name="uitars_execute", annotations={"readOnlyHint": False})
@@ -243,26 +241,6 @@ async def uitars_status() -> dict:
     }
 
 
-@mcp.tool(name="uitars_shutdown", annotations={"readOnlyHint": False})
-async def uitars_shutdown() -> dict:
-    """Shut down the uitars-mcp server gracefully.
-
-    Call this when the session is complete and the server should terminate.
-    Irreversible — all in-memory state is lost.
-
-    ## Return Format
-    {"success": true, "message": str}
-
-    ## Examples
-    - uitars_shutdown()
-    """
-    import logging as _logging
-    import os as _os
-
-    _logging.getLogger("uitars-mcp").warning("Shutdown requested via MCP tool")
-    _os._exit(0)
-
-
 @mcp.tool(name="uitars_help", annotations={"readOnlyHint": True})
 async def uitars_help() -> dict:
     """Get inline help — task reference, examples, and current configuration.
@@ -337,12 +315,6 @@ async def uitars_help() -> dict:
                 "description": "Get inline help — tool reference, examples, and config.",
                 "parameters": "none",
                 "example": "uitars_help()",
-            },
-            {
-                "name": "uitars_shutdown",
-                "description": "Shut down the server. Irreversible.",
-                "parameters": "none",
-                "example": "uitars_shutdown()",
             },
         ],
         "examples": [
