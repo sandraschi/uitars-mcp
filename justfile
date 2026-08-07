@@ -8,7 +8,7 @@ import 'scripts/just/fleet.just'
 default:
     @just --list
 
-# ── Run ────────────────────────────────────────────────────────────
+# --- Run ---
 
 # Start full stack (backend + frontend + browser)
 serve:
@@ -22,7 +22,7 @@ backend:
 frontend:
     cd web_sota && npm run dev
 
-# ── Dev ────────────────────────────────────────────────────────────
+# --- Dev ---
 
 # Install all deps (Python + Node + pre-commit hooks)
 install:
@@ -35,7 +35,7 @@ browser:
     uv sync --extra browser
     uv run playwright install chromium
 
-# ── Test & Lint ────────────────────────────────────────────────────
+# --- Test  Lint ---
 
 # Run all checks (lint + test)
 check: lint test
@@ -56,13 +56,13 @@ fmt:
 fmt-web:
     cd web_sota && npx biome format --write src/
 
-# ── Build ──────────────────────────────────────────────────────────
+# --- Build ---
 
 # Build frontend for production
 build:
     cd web_sota && npm run build
 
-# ── Clean ──────────────────────────────────────────────────────────
+# --- Clean ---
 
 # Clean build artifacts
 clean:
@@ -70,8 +70,14 @@ clean:
     Remove-Item -Recurse -Force .pytest_cache -ErrorAction SilentlyContinue
     Remove-Item -Recurse -Force .ruff_cache -ErrorAction SilentlyContinue
 
-# ── Maintenance ────────────────────────────────────────────────────
+# --- Maintenance ---
 
 # Sync and update lockfile
 lock:
     uv lock
+
+# Bootstrap: install dev deps + pre-commit hook
+bootstrap:
+    uv sync --group dev
+    uv run pre-commit install
+    Write-Host "Pre-commit hooks installed." -ForegroundColor Green
