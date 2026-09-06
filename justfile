@@ -20,14 +20,14 @@ backend:
 
 # Start frontend only (assumes backend running)
 frontend:
-    cd web_sota && npm run dev
+    cd web_sota; npm run dev
 
 # --- Dev ---
 
 # Install all deps (Python + Node + pre-commit hooks)
 install:
     uv sync --extra dev
-    cd web_sota && npm install
+    cd web_sota; npm install
     uv run pre-commit install
 
 # Install browser deps (Playwright + Chromium)
@@ -54,13 +54,13 @@ fmt:
 
 # Format frontend
 fmt-web:
-    cd web_sota && npx biome format --write src/
+    cd web_sota; npx biome format --write src/
 
 # --- Build ---
 
 # Build frontend for production
 build:
-    cd web_sota && npm run build
+    cd web_sota; npm run build
 
 # --- Clean ---
 
