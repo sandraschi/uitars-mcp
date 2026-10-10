@@ -7,6 +7,8 @@
   <a href="https://github.com/PrefectHQ/fastmcp"><img src="https://img.shields.io/badge/FastMCP-3.2-7c5cfc?style=flat-square" alt="FastMCP"></a>
 </p>
 
+Vision-based computer-use agent: the AI looks at screenshots and clicks/types in desktops apps and websites. Slower than pywinauto's direct Windows APIs, but works with anything visible on screen.
+
 > **Tell your computer what to do. It does it.**
 
 uitars-mcp gives AI agents (Claude, OpenCode, Hermes) eyes and hands on your desktop **and browser**. It takes screenshots, feeds them to a vision-language model, and executes mouse/keyboard/browser actions — all through standard MCP tools.
