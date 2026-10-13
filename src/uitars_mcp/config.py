@@ -26,7 +26,7 @@ class UITARSConfig:
         warnings: list[str] = []
 
         if not self.vlm_base_url:
-            warnings.append("UITARS_VLM_BASE_URL is empty — no VLM configured")
+            warnings.append("UITARS_VLM_BASE_URL is empty - no VLM configured")
 
         try:
             import asyncio
@@ -51,7 +51,7 @@ class UITARSConfig:
             if not already_running:
                 asyncio.run(_probe())
             else:
-                logger.info("Skipping VLM probe — event loop already running")
+                logger.info("Skipping VLM probe - event loop already running")
 
         except Exception as e:
             warnings.append(f"VLM probe failed: {e}")
@@ -65,7 +65,7 @@ class UITARSConfig:
             else:
                 logger.info("Browser operator unavailable (uv sync --extra browser)")
         except Exception:
-            logger.debug("Playwright probe failed — browser operator unavailable")
+            logger.debug("Playwright probe failed - browser operator unavailable")
 
         return warnings
 

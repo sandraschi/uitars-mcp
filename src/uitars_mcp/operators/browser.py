@@ -1,6 +1,6 @@
-"""Browser operator — Playwright-based web automation via VLM grounding.
+"""Browser operator - Playwright-based web automation via VLM grounding.
 
-Requires: playwright (optional — `uv sync --extra browser` or `pip install playwright`)
+Requires: playwright (optional - `uv sync --extra browser` or `pip install playwright`)
 
 Launches a headless Chromium browser, captures page screenshots, sends them to
 the VLM for action grounding, and executes click/type/scroll actions on the page.
@@ -25,14 +25,14 @@ BROWSER_PROMPT = (
     "You must output exactly one action per turn to complete the task.\n"
     "\n"
     "Available browser actions:\n"
-    "- click(start_box='(x1,y1),(x2,y2)') — click at center of bounding box\n"
-    "- type(content='text to type') — type text into the focused input\n"
-    "- scroll(start_box='(x1,y1),(x2,y2)', direction='up|down') — scroll in region\n"
-    "- navigate(url='https://...') — go to a new URL\n"
-    "- go_back() — return to previous page\n"
-    "- press_key(key='Enter') — press a keyboard key\n"
-    "- wait() — wait 2 seconds for page to load\n"
-    "- finished(content='task complete description') — indicate completion\n"
+    "- click(start_box='(x1,y1),(x2,y2)') - click at center of bounding box\n"
+    "- type(content='text to type') - type text into the focused input\n"
+    "- scroll(start_box='(x1,y1),(x2,y2)', direction='up|down') - scroll in region\n"
+    "- navigate(url='https://...') - go to a new URL\n"
+    "- go_back() - return to previous page\n"
+    "- press_key(key='Enter') - press a keyboard key\n"
+    "- wait() - wait 2 seconds for page to load\n"
+    "- finished(content='task complete description') - indicate completion\n"
     "\n"
     "Format your response exactly as:\n"
     "Thought: <your step-by-step reasoning>\n"
@@ -92,7 +92,7 @@ def get_page():
     try:
         page.evaluate("1")
     except Exception:
-        logger.warning("Browser page disconnected — recovering")
+        logger.warning("Browser page disconnected - recovering")
         return _recover_browser()
     return page
 

@@ -1,4 +1,4 @@
-"""FastMCP server — registers uitars-mcp tools."""
+"""FastMCP server - registers uitars-mcp tools."""
 
 from __future__ import annotations
 
@@ -224,7 +224,7 @@ async def uitars_browser_close() -> dict:
 
 @mcp.tool(name="uitars_status", annotations={"readOnlyHint": True})
 async def uitars_status() -> dict:
-    """Get unified health status — VLM, browser, config.
+    """Get unified health status - VLM, browser, config.
 
     ## Return Format
     {"success": true, "vlm": {...}, "browser_available": bool, "config": {...}}
@@ -248,7 +248,7 @@ async def uitars_shutdown() -> dict:
     """Shut down the uitars-mcp server gracefully.
 
     Call this when the session is complete and the server should terminate.
-    Irreversible — all in-memory state is lost.
+    Irreversible - all in-memory state is lost.
 
     ## Return Format
     {"success": true, "message": str}
@@ -265,7 +265,7 @@ async def uitars_shutdown() -> dict:
 
 @mcp.tool(name="uitars_help", annotations={"readOnlyHint": True})
 async def uitars_help() -> dict:
-    """Get inline help — task reference, examples, and current configuration.
+    """Get inline help - task reference, examples, and current configuration.
 
     ## Return Format
     {"success": true, "tools": [...], "examples": [...], "config": {...}}
@@ -279,7 +279,7 @@ async def uitars_help() -> dict:
         "success": True,
         "server": f"uitars-mcp v{__version__}",
         "description": (
-            "Desktop + browser GUI agent — give it a natural language task and it "
+            "Desktop + browser GUI agent - give it a natural language task and it "
             "takes screenshots, feeds them to a vision-language model, "
             "and executes mouse/keyboard/browser actions to complete it."
         ),
@@ -334,7 +334,7 @@ async def uitars_help() -> dict:
             },
             {
                 "name": "uitars_help",
-                "description": "Get inline help — tool reference, examples, and config.",
+                "description": "Get inline help - tool reference, examples, and config.",
                 "parameters": "none",
                 "example": "uitars_help()",
             },
@@ -370,13 +370,13 @@ async def uitars_help() -> dict:
             "backend_port": config.backend_port,
         },
         "docs": [
-            "README.md — overview and quick start",
-            "docs/install.md — prerequisites and setup",
-            "docs/configuration.md — env vars and providers",
-            "docs/tools-reference.md — full tool API reference",
-            "docs/architecture.md — internals and data flow",
-            "docs/safety.md — fail-safe, risks, privacy",
-            "docs/troubleshooting.md — common problems and fixes",
-            "docs/integration-guide.md — Claude Desktop, fleet, REST API",
+            "README.md - overview and quick start",
+            "docs/install.md - prerequisites and setup",
+            "docs/configuration.md - env vars and providers",
+            "docs/tools-reference.md - full tool API reference",
+            "docs/architecture.md - internals and data flow",
+            "docs/safety.md - fail-safe, risks, privacy",
+            "docs/troubleshooting.md - common problems and fixes",
+            "docs/integration-guide.md - Claude Desktop, fleet, REST API",
         ],
     }

@@ -1,4 +1,4 @@
-"""FastAPI application — REST API for uitars-mcp webapp."""
+"""FastAPI application - REST API for uitars-mcp webapp."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="UI-TARS MCP",
-    description="Desktop GUI agent MCP server — natural language computer control",
+    description="Desktop GUI agent MCP server - natural language computer control",
     version=__version__,
     lifespan=lifespan,
     docs_url="/docs",
